@@ -8,6 +8,8 @@ Run
 npm install
 ```
 
+Rename .env.example in .env and set the necesary environment variables.
+
 ### Develop
 
 Run
