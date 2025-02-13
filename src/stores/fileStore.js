@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "react-toastify";
 import { getS3UploadUrl, uploadFileToS3 } from "../utils/api";
 
 const useFileStore = create((set) => ({
@@ -9,18 +10,21 @@ const useFileStore = create((set) => ({
 
   uploadFile: async () => {
     const { file } = useFileStore.getState();
-    if (!file) return alert("Please select a file!");
+    if (!file) {
+      toast.error("Please select a file!");
+      return;
+    }
 
     set({ uploading: true });
 
     try {
-      const data = await getS3UploadUrl(file); 
+      const data = await getS3UploadUrl(file);
       await uploadFileToS3(data.url, file);
-      alert("File uploaded successfully!");
+      toast.success("File uploaded successfully!");
       set({ file: null });
     } catch (error) {
       console.error("Upload error:", error);
-      alert("File upload failed!");
+      toast.error("File upload failed!");
     } finally {
       set({ uploading: false });
     }
