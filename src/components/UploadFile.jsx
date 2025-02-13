@@ -1,10 +1,10 @@
 import React from "react";
 import FileInput from "./FileInput";
 import UploadButton from "./UploadButton";
-import useFileUpload from "../hooks/useFileUpload";
+import useFileStore from "../stores/fileStore";
 
 const UploadFile = () => {
-  const { file, uploading, setFile, uploadFile } = useFileUpload();
+  const { file, uploading, setFile, uploadFile } = useFileStore();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

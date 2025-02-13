@@ -16,3 +16,24 @@ export const getS3UploadUrl = async (file) => {
 
   return await response.json();
 };
+
+export const uploadFileToS3 = async (uploadUrl, file) => {
+    try {
+        const response = await fetch(uploadUrl, {
+            mode: "cors",
+            method: "PUT",
+            headers: { "Content-Type": file.type },
+            body: file,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to upload file: ${response.statusText}`);
+        }
+
+        return response;
+    } catch (error) {
+        console.error("Error uploading file to S3:", error);
+        throw error;
+    }
+};
+
