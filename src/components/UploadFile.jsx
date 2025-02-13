@@ -1,10 +1,12 @@
 import React from "react";
-import FileInput from "./FileInput";
-import UploadButton from "./UploadButton";
 import useFileStore from "../stores/fileStore";
 
 const UploadFile = () => {
-  const { file, uploading, setFile, uploadFile } = useFileStore();
+  const { file, uploading, setFile, processFile } = useFileStore();
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -14,16 +16,22 @@ const UploadFile = () => {
         </h1>
 
         <div className="flex flex-col items-center space-y-4">
-          <FileInput onFileChange={setFile} />
-          <UploadButton onClick={uploadFile} uploading={uploading} />
-        </div>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
 
-        {file && (
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600 font-bold">Selected File:</p>
-            <p className="text-sm font-medium text-gray-800">{file.name}</p>
-          </div>
-        )}
+          <button
+            onClick={processFile}
+            disabled={uploading || !file}
+            className={`w-full px-4 py-2 text-white font-medium rounded-xl shadow-md ${
+              uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {uploading ? "Processing..." : "Upload and Process"}
+          </button>
+        </div>
       </div>
     </div>
   );
