@@ -18,7 +18,7 @@ const handleDownload = async (videoUrl, fileName) => {
 
     // Create a URL for the Blob
     const blobUrl = window.URL.createObjectURL(blob);
-
+    
     // Create an anchor element
     const anchor = document.createElement("a");
     anchor.href = blobUrl;
@@ -65,9 +65,6 @@ const useFileStore = create((set) => ({
       set({ uid });
 
       const data = await getS3UploadUrl(uid, file);
-
-      console.log("data")
-      console.log(data)
 
       await uploadFileToS3(data.url, file);
 
@@ -132,8 +129,8 @@ const useFileStore = create((set) => ({
     }
   },
 
-  getVideoSubtitled: async () => {
-    const { uid, file, setVideoUrl } = useFileStore.getState();
+  setVideoSubtitledUrl: async () => {
+    const { uid, file, videoUrl } = useFileStore.getState();
 
     if (!uid || !file) {
       toast.error("Cannot get video. UID or file is missing!");
@@ -144,7 +141,7 @@ const useFileStore = create((set) => ({
 
     try {
       const data = await getVideoSubtitled(uid, file.name);
-      setVideoUrl(data.url);
+      set({videoUrl: data.url});
 
       toast.success("Video url obtained successfully!");
       return true;
@@ -158,7 +155,7 @@ const useFileStore = create((set) => ({
   },
 
   processFile: async () => {
-    const { uploadFile, extractAudio, getSubtitles, getVideoSubtitled, url, file } = useFileStore.getState();
+    const { uploadFile, extractAudio, getSubtitles, setVideoSubtitledUrl, file } = useFileStore.getState();
 
     set({ uploading: true });
 
@@ -172,10 +169,11 @@ const useFileStore = create((set) => ({
       // const subtitlesSuccess = await getSubtitles();
       // if (!subtitlesSuccess) return;
 
-      const videoUrlSuccess = await getVideoSubtitled();
+      const videoUrlSuccess = await setVideoSubtitledUrl();
       if (!videoUrlSuccess) return;
+      const { videoUrl } = useFileStore.getState();
 
-      handleDownload(url, "subtitled_"+file.name)
+      handleDownload(videoUrl, "subtitled_"+file.name)
 
       toast.success("All steps completed successfully!");
     } catch (error) {
