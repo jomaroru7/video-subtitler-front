@@ -3,40 +3,6 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { getS3UploadUrl, uploadFileToS3, extractAudioFromVideo, getSubtitles, getVideoSubtitled } from "../utils/api";
 
-const handleDownload = async (videoUrl, fileName) => {
-
-  try {
-    // Fetch the video content as a Blob
-    const response = await fetch(videoUrl);
-
-    // Check if the response is OK
-    if (!response.ok) {
-      throw new Error("Failed to fetch the video from S3.");
-    }
-
-    const blob = await response.blob();
-
-    // Create a URL for the Blob
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    // Create an anchor element
-    const anchor = document.createElement("a");
-    anchor.href = blobUrl;
-    anchor.download = fileName;
-
-    // Append to body and trigger click
-    document.body.appendChild(anchor);
-    anchor.click();
-
-    // Clean up
-    document.body.removeChild(anchor);
-    window.URL.revokeObjectURL(blobUrl); // Free memory
-  } catch (error) {
-    console.error("Error downloading the video:", error.message);
-    alert("Failed to download the video from S3.");
-  }
-};
-
 const useFileStore = create((set) => ({
   file: null,
   uid: null,
@@ -171,9 +137,6 @@ const useFileStore = create((set) => ({
 
       const videoUrlSuccess = await setVideoSubtitledUrl();
       if (!videoUrlSuccess) return;
-      const { videoUrl } = useFileStore.getState();
-
-      handleDownload(videoUrl, "subtitled_"+file.name)
 
       toast.success("All steps completed successfully!");
     } catch (error) {
