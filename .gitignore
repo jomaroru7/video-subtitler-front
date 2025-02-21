@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .env
+public/media
 
 
 # Editor directories and files
