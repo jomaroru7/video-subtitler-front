@@ -9,4 +9,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  define: {
+    'process.env': {},
+  },
+  build: {
+    lib: {
+      entry: "src/main.jsx",
+      name: "VideoSubtitlerFront",
+      fileName: "video-subtitler-front",
+      formats: ["iife"],
+    }
+  }
 })
