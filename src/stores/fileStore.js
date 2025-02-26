@@ -61,7 +61,7 @@ const useFileStore = create((set) => ({
     const { file } = useFileStore.getState();
     if (!file) return toast.error("Please select a file!"), false;
 
-    return handleAsyncAction(async () => {
+    return handleAsyncAction(set, async () => {
       const uid = uuidv4();
       set({ uid });
 
@@ -81,7 +81,7 @@ const useFileStore = create((set) => ({
     const { file, uid } = useFileStore.getState();
     if (!file || !uid) return toast.error("Cannot extract audio. File or UID is missing!"), false;
 
-    return handleAsyncAction(async () => {
+    return handleAsyncAction(set, async () => {
       const data = await extractAudioFromVideo(uid, file.name);
       set({ audioName: data.key });
 
@@ -98,7 +98,7 @@ const useFileStore = create((set) => ({
     const { uid, audioName } = useFileStore.getState();
     if (!uid || !audioName) return toast.error("Cannot generate subtitles. UID or audio name is missing!"), false;
 
-    return handleAsyncAction(async () => {
+    return handleAsyncAction(set, async () => {
       const data = await getSubtitles(uid, audioName);
 
       const subtitlesFileName = data.body.subtitles.key;
@@ -126,7 +126,7 @@ const useFileStore = create((set) => ({
     const { uid, file, subtitlesName } = useFileStore.getState();
     if (!uid || !file) return toast.error("Cannot get video. UID or file is missing!"), false;
 
-    return handleAsyncAction(async () => {
+    return handleAsyncAction(set, async () => {
       const data = await getVideoSubtitled(uid, file.name, subtitlesName);
       set({ videoUrl: data.url });
 
@@ -142,7 +142,7 @@ const useFileStore = create((set) => ({
  * @param {string} errorMessage Error message to display on failure
  * @returns {Promise<boolean>} Success or failure status
  */
-const handleAsyncAction = async (action, errorMessage) => {
+const handleAsyncAction = async (set, action, errorMessage) => {
   set({ uploading: true });
   try {
     return await action();
