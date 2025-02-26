@@ -9,13 +9,16 @@ import { getS3UploadUrl, uploadFileToS3, extractAudioFromVideo, getSubtitles, ge
  * @property {string | null} uid
  * @property {boolean} uploading
  * @property {string | null} audioName
+ * @property {string | null} subtitlesName
  * @property {string | null} subtitles
  * @property {string | null} videoUrl
+ * @property {string | null} subtitlesUrl
  * @property {(file: File) => void} setFile
  * @property {(uid: string) => void} setUid
  * @property {(audioName: string) => void} setAudioName
  * @property {(subtitles: string) => void} setSubtitles
  * @property {(videoUrl: string) => void} setVideoUrl
+ * @property {(subtitlesUrl: string) => void} setSubtitlesUrl
  * @property {() => Promise<boolean>} uploadFile
  * @property {() => Promise<boolean>} extractAudio
  * @property {() => Promise<boolean>} getSubtitles
@@ -29,14 +32,18 @@ const useFileStore = create((set) => ({
   uid: null,
   uploading: false,
   audioName: null,
+  subtitlesName: null,
   subtitles: null,
   videoUrl: null,
+  subtitlesUrl: null,
 
   setFile: (file) => set({ file }),
   setUid: (uid) => set({ uid }),
   setAudioName: (audioName) => set({ audioName }),
+  setSubtitlesName: (subtitlesName) => set({ subtitlesName }),
   setSubtitles: (subtitles) => set({ subtitles }),
   setVideoUrl: (videoUrl) => set({ videoUrl }),
+  setSubtitlesUrl: (subtitlesUrl) => set({ subtitlesUrl }),
 
   uploadFile: async () => {
     const { file } = useFileStore.getState();
@@ -103,7 +110,18 @@ const useFileStore = create((set) => ({
 
     try {
       const data = await getSubtitles(uid, audioName);
-      set({ subtitles: data.subtitles });
+
+      const subtitlesFileName = data.body.subtitles.key;
+      set({subtitlesName: subtitlesFileName})
+
+      const subtitlesURL = data.body.subtitles.url;
+      set({ subtitlesUrl: subtitlesURL });
+
+      const response = await fetch(subtitlesURL);
+      if (!response.ok) throw new Error("Failed to fetch subtitles");
+
+      const text = await response.text();
+      set({subtitles: text});
 
       toast.success("Subtitles generated successfully!");
       return true;
@@ -117,7 +135,7 @@ const useFileStore = create((set) => ({
   },
 
   setVideoSubtitledUrl: async () => {
-    const { uid, file } = useFileStore.getState();
+    const { uid, file, subtitlesName } = useFileStore.getState();
 
     if (!uid || !file) {
       toast.error("Cannot get video. UID or file is missing!");
@@ -127,7 +145,7 @@ const useFileStore = create((set) => ({
     set({ uploading: true });
 
     try {
-      const data = await getVideoSubtitled(uid, file.name);
+      const data = await getVideoSubtitled(uid, file.name, subtitlesName );
       set({ videoUrl: data.url });
 
       toast.success("Video URL obtained successfully!");

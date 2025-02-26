@@ -3,9 +3,9 @@ import ReactPlayer from "react-player";
 import useFileStore from "../../stores/fileStore";
 
 const parseSRT = (srtText) => {
-    const subtitleRegex = /(\d+)\n(\d{2}:\d{2}:\d{2}),(\d{3}) --> (\d{2}:\d{2}:\d{2}),(\d{3})\n([\s\S]*?)(?=\n\n|\n*$)/g;
+    const subtitleRegex = /(\d+)\n(\d{2}:\d{2}:\d{2}),(\d{1,3}) --> (\d{2}:\d{2}:\d{2}),(\d{1,3})\n([\s\S]*?)(?=\n\n|\n*$)/g;
     let subtitles = [];
-    
+
     let match;
     while ((match = subtitleRegex.exec(srtText)) !== null) {
         const start = timeToSeconds(match[2], match[3]);
@@ -13,7 +13,7 @@ const parseSRT = (srtText) => {
         const text = match[6].replace(/\r/g, "").trim();
         subtitles.push({ start, end, text });
     }
-    
+
     return subtitles;
 };
 
@@ -23,9 +23,9 @@ const timeToSeconds = (hhmmss, ms) => {
 };
 
 const VideoPlayer = () => {
-    const { file, videoUrl } = useFileStore();
+    const { file, videoUrl, subtitles } = useFileStore();
     const [videoSrc, setVideoSrc] = useState(null);
-    const [subtitles, setSubtitles] = useState([]);
+    const [subtitlesText, setSubtitlesText] = useState([]);
     const [currentSubtitle, setCurrentSubtitle] = useState("");
     const playerRef = useRef(null);
 
@@ -43,31 +43,19 @@ const VideoPlayer = () => {
     }, [file, videoUrl]);
 
     useEffect(() => {
-        const loadSubtitles = async () => {
-
-            try {
-                const response = await fetch("/media/cajon_de_sastre.srt");
-
-                if (!response.ok) {
-                    throw new Error(`Failed to load subtitles: ${response.statusText}`);
-                }
-
-                const srtText = await response.text();
-
-                const parsedSubtitles = parseSRT(srtText);
-                setSubtitles(parsedSubtitles);
-            } catch (error) {
-                console.error("[ERROR] Subtitles loading failed:", error);
-            }
+        const loadSubtitles = () => {
+            const srtText = subtitles;
+            const parsedSubtitles = parseSRT(srtText);
+            setSubtitlesText(parsedSubtitles);
         };
 
         loadSubtitles();
     }, []);
 
     const handleProgress = ({ playedSeconds }) => {
-        if (!subtitles.length) return;
+        if (!subtitlesText.length) return;
 
-        const activeSubtitle = subtitles.find(
+        const activeSubtitle = subtitlesText.find(
             (sub) => playedSeconds >= sub.start && playedSeconds <= sub.end
         );
 
@@ -90,9 +78,9 @@ const VideoPlayer = () => {
                     playing={false}
                     onProgress={handleProgress}
                 />
-                
+
                 {currentSubtitle && (
-                    <div className="absolute bottom-10 w-full text-center bg-black/60 text-white text-lg px-4 py-2 rounded-md">
+                    <div className="absolute bottom-20 w-full text-center bg-black/60 text-white text-lg px-4 py-2 rounded-md">
                         {currentSubtitle}
                     </div>
                 )}

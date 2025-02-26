@@ -62,8 +62,8 @@ export const getSubtitles = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_B
     mode: "cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      uid,
-      key: "audio/" + filename,
+      IID: uid,
+      audio: filename,
       bucket: bucket,
     }),
   });
@@ -72,11 +72,11 @@ export const getSubtitles = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_B
     throw new Error(`Server error: ${response.status}`);
   }
 
+
   return await response.json();
 };
 
-export const getVideoSubtitled = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_BUCKET) => {
-  // TODO: Cambiar key de srt por la variable del nombre
+export const getVideoSubtitled = async (uid, filename, srtName, bucket = ENV.VITE_S3_DEFAULT_BUCKET) => {
   const response = await fetch(ENV.VITE_GET_SUBTITLED_VIDEO_URL, {
     method: "POST",
     mode: "cors",
@@ -86,7 +86,7 @@ export const getVideoSubtitled = async (uid, filename, bucket = ENV.VITE_S3_DEFA
         key: "video/" + uid + "/" + filename,
       },
       "srt": {
-        key: "srt/cajon_de_sastre.srt"
+        key: srtName
       }
     }),
   });
