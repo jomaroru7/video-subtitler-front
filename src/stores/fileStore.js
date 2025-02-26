@@ -3,6 +3,27 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { getS3UploadUrl, uploadFileToS3, extractAudioFromVideo, getSubtitles, getVideoSubtitled } from "../utils/api";
 
+/**
+ * @typedef {Object} FileStore
+ * @property {File | null} file
+ * @property {string | null} uid
+ * @property {boolean} uploading
+ * @property {string | null} audioName
+ * @property {string | null} subtitles
+ * @property {string | null} videoUrl
+ * @property {(file: File) => void} setFile
+ * @property {(uid: string) => void} setUid
+ * @property {(audioName: string) => void} setAudioName
+ * @property {(subtitles: string) => void} setSubtitles
+ * @property {(videoUrl: string) => void} setVideoUrl
+ * @property {() => Promise<boolean>} uploadFile
+ * @property {() => Promise<boolean>} extractAudio
+ * @property {() => Promise<boolean>} getSubtitles
+ * @property {() => Promise<boolean>} setVideoSubtitledUrl
+ * @property {() => Promise<void>} processFile
+ */
+
+/** @type {import("zustand").UseBoundStore<import("zustand").StoreApi<FileStore>>} */
 const useFileStore = create((set) => ({
   file: null,
   uid: null,
@@ -96,7 +117,7 @@ const useFileStore = create((set) => ({
   },
 
   setVideoSubtitledUrl: async () => {
-    const { uid, file, videoUrl } = useFileStore.getState();
+    const { uid, file } = useFileStore.getState();
 
     if (!uid || !file) {
       toast.error("Cannot get video. UID or file is missing!");
@@ -107,13 +128,13 @@ const useFileStore = create((set) => ({
 
     try {
       const data = await getVideoSubtitled(uid, file.name);
-      set({videoUrl: data.url});
+      set({ videoUrl: data.url });
 
-      toast.success("Video url obtained successfully!");
+      toast.success("Video URL obtained successfully!");
       return true;
     } catch (error) {
-      console.error("Video url error:", error);
-      toast.error("Video url could not be obtained!");
+      console.error("Video URL error:", error);
+      toast.error("Video URL could not be obtained!");
       return false;
     } finally {
       set({ uploading: false });
@@ -121,7 +142,7 @@ const useFileStore = create((set) => ({
   },
 
   processFile: async () => {
-    const { uploadFile, extractAudio, getSubtitles, setVideoSubtitledUrl, file } = useFileStore.getState();
+    const { uploadFile, extractAudio, getSubtitles, setVideoSubtitledUrl } = useFileStore.getState();
 
     set({ uploading: true });
 
@@ -132,8 +153,8 @@ const useFileStore = create((set) => ({
       const audioSuccess = await extractAudio();
       if (!audioSuccess) return;
 
-      // const subtitlesSuccess = await getSubtitles();
-      // if (!subtitlesSuccess) return;
+      const subtitlesSuccess = await getSubtitles();
+      if (!subtitlesSuccess) return;
 
       const videoUrlSuccess = await setVideoSubtitledUrl();
       if (!videoUrlSuccess) return;
