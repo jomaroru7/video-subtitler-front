@@ -71,8 +71,8 @@ const VideoPlayer = () => {
                     ref={playerRef}
                     url={videoSrc}
                     controls
-                    width="100%"
-                    height="auto"
+                    width="auto"
+                    height="500px"
                     playing={videoIsPlaying}
                     onProgress={handleProgress}
                     onPlay={() => setVideoIsPlaying(true)}
