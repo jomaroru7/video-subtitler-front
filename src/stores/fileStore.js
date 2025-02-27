@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-import { 
-  getS3UploadUrl, 
-  uploadFileToS3, 
-  extractAudioFromVideo, 
-  getSubtitles, 
-  getVideoSubtitled 
+import {
+  getS3UploadUrl,
+  uploadFileToS3,
+  extractAudioFromVideo,
+  getSubtitles,
+  getVideoSubtitled
 } from "../utils/api";
 
 /**
@@ -19,17 +19,24 @@ import {
  * @property {string | null} subtitles
  * @property {string | null} videoUrl
  * @property {string | null} subtitlesUrl
+ * @property {Array<{ start: number, text: string }>} subtitlesArray 
+ * @property {{ start: number, text: string } | null} currentSubtitle
+ * @property {boolean} subtitlesEdited
  * @property {(file: File) => void} setFile
  * @property {(uid: string) => void} setUid
  * @property {(audioName: string) => void} setAudioName
  * @property {(subtitlesName: string) => void} setSubtitlesName
  * @property {(subtitles: string) => void} setSubtitles
  * @property {(videoUrl: string) => void} setVideoUrl
+ * @property {(subtitlesArray: Array<{ start: number, text: string }>) => void} setSubtitlesArray
+ * @property {(currentSubtitle: { start: number, text: string } | null) => void} setCurrentSubtitle
  * @property {(subtitlesUrl: string) => void} setSubtitlesUrl
+ * @property {(subtitlesEdited: boolean) => void} setSubtitlesEdited
  * @property {() => Promise<boolean>} uploadFile
  * @property {() => Promise<boolean>} extractAudio
  * @property {() => Promise<boolean>} getSubtitles
- * @property {() => Promise<boolean>} setVideoSubtitledUrl
+ * @property {() => Promise<boolean>} setVideoSubtitledUrl 
+ * @property {(startTime: number, newText: string) => void} updateSubtitleText
  */
 
 /** @type {import("zustand").UseBoundStore<import("zustand").StoreApi<FileStore>>} */
@@ -43,6 +50,10 @@ const useFileStore = create((set) => ({
   subtitles: null,
   videoUrl: null,
   subtitlesUrl: null,
+  subtitlesArray: [],
+  currentSubtitle: [],
+  subtitlesEdited: false,
+
 
   // State Setters
   setFile: (file) => set({ file }),
@@ -52,6 +63,10 @@ const useFileStore = create((set) => ({
   setSubtitles: (subtitles) => set({ subtitles }),
   setVideoUrl: (videoUrl) => set({ videoUrl }),
   setSubtitlesUrl: (subtitlesUrl) => set({ subtitlesUrl }),
+  setSubtitlesArray: (subtitlesArray) => set({ subtitlesArray }),
+  setCurrentSubtitle: (currentSubtitle) => set({ currentSubtitle }),
+  setSubtitlesEdited: (subtitlesEdited) => set({ subtitlesEdited }),
+
 
   /**
    * Upload file to S3
@@ -133,6 +148,15 @@ const useFileStore = create((set) => ({
       toast.success("Video URL obtained successfully!");
       return true;
     }, "Video URL could not be obtained!");
+  },
+
+  updateSubtitleText: (startTime, newText) => {
+    set((state) => ({
+      subtitlesArray: state.subtitlesArray.map((sub) =>
+        sub.start === startTime ? { ...sub, text: newText } : sub
+      ),
+      currentSubtitle: { startTime:startTime, text: newText },
+    }));
   },
 }));
 

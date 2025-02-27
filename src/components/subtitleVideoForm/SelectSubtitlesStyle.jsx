@@ -1,6 +1,7 @@
 import React from 'react'
 import useFileStore from '../../stores/fileStore';
 import DownloadButton from './DownloadButton';
+import SrtEditor from './SrtEditor';
 
 const SelectSubtitlesStyle = () => {
   const {uploading, videoUrl, setVideoSubtitledUrl} = useFileStore()
@@ -10,6 +11,7 @@ const SelectSubtitlesStyle = () => {
   return (
     <div className="flex flex-col items-center justify-center bg-gray-100">
         <div className="flex flex-col gap-y-2 bg-white p-6 rounded-2xl shadow-lg max-w-md w-full ">
+            <SrtEditor/>
             <button
                     onClick={handleClick}
                     disabled={uploading}

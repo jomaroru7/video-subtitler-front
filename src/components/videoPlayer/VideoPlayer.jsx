@@ -23,10 +23,8 @@ const timeToSeconds = (hhmmss, ms) => {
 };
 
 const VideoPlayer = () => {
-    const { file, videoUrl, subtitles } = useFileStore();
+    const { file, videoUrl, subtitles, subtitlesArray, setsubtitlesArray, currentSubtitle, setCurrentSubtitle } = useFileStore();
     const [videoSrc, setVideoSrc] = useState(null);
-    const [subtitlesText, setSubtitlesText] = useState([]);
-    const [currentSubtitle, setCurrentSubtitle] = useState("");
     const playerRef = useRef(null);
 
     useEffect(() => {
@@ -46,20 +44,20 @@ const VideoPlayer = () => {
         const loadSubtitles = () => {
             const srtText = subtitles;
             const parsedSubtitles = parseSRT(srtText);
-            setSubtitlesText(parsedSubtitles);
+            setsubtitlesArray(parsedSubtitles);
         };
 
         loadSubtitles();
     }, []);
 
     const handleProgress = ({ playedSeconds }) => {
-        if (!subtitlesText.length) return;
+        if (!subtitlesArray.length) return;
 
-        const activeSubtitle = subtitlesText.find(
+        const activeSubtitle = subtitlesArray.find(
             (sub) => playedSeconds >= sub.start && playedSeconds <= sub.end
         );
 
-        setCurrentSubtitle(activeSubtitle ? activeSubtitle.text : "");
+        setCurrentSubtitle(activeSubtitle ? activeSubtitle : []);
     };
 
     if (!videoSrc) {
@@ -81,7 +79,7 @@ const VideoPlayer = () => {
 
                 {currentSubtitle && (
                     <div className="absolute bottom-20 w-full text-center bg-black/60 text-white text-lg px-4 py-2 rounded-md">
-                        {currentSubtitle}
+                        {currentSubtitle.text}
                     </div>
                 )}
             </div>
