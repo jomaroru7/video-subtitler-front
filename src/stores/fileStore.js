@@ -22,6 +22,7 @@ import {
  * @property {Array<{ start: number, text: string }>} subtitlesArray 
  * @property {{ start: number, text: string } | null} currentSubtitle
  * @property {boolean} subtitlesEdited
+ * @property {boolean} videoIsPlaying
  * @property {(file: File) => void} setFile
  * @property {(uid: string) => void} setUid
  * @property {(audioName: string) => void} setAudioName
@@ -32,6 +33,7 @@ import {
  * @property {(currentSubtitle: { start: number, text: string } | null) => void} setCurrentSubtitle
  * @property {(subtitlesUrl: string) => void} setSubtitlesUrl
  * @property {(subtitlesEdited: boolean) => void} setSubtitlesEdited
+ * @property {(videoIsPlaying: boolean) => void} setVideoIsPlaying
  * @property {() => Promise<boolean>} uploadFile
  * @property {() => Promise<boolean>} extractAudio
  * @property {() => Promise<boolean>} getSubtitles
@@ -53,6 +55,7 @@ const useFileStore = create((set) => ({
   subtitlesArray: [],
   currentSubtitle: [],
   subtitlesEdited: false,
+  videoIsPlaying:false,
 
 
   // State Setters
@@ -66,6 +69,7 @@ const useFileStore = create((set) => ({
   setSubtitlesArray: (subtitlesArray) => set({ subtitlesArray }),
   setCurrentSubtitle: (currentSubtitle) => set({ currentSubtitle }),
   setSubtitlesEdited: (subtitlesEdited) => set({ subtitlesEdited }),
+  setVideoIsPlaying: (videoIsPlaying) => set({ videoIsPlaying }),
 
 
   /**

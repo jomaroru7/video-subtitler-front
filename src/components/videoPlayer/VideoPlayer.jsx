@@ -23,7 +23,7 @@ const timeToSeconds = (hhmmss, ms) => {
 };
 
 const VideoPlayer = () => {
-    const { file, videoUrl, subtitles, subtitlesArray, setsubtitlesArray, currentSubtitle, setCurrentSubtitle } = useFileStore();
+    const { file, videoUrl, subtitles, subtitlesArray, setSubtitlesArray, currentSubtitle, videoIsPlaying, setCurrentSubtitle, setVideoIsPlaying } = useFileStore();
     const [videoSrc, setVideoSrc] = useState(null);
     const playerRef = useRef(null);
 
@@ -44,7 +44,7 @@ const VideoPlayer = () => {
         const loadSubtitles = () => {
             const srtText = subtitles;
             const parsedSubtitles = parseSRT(srtText);
-            setsubtitlesArray(parsedSubtitles);
+            setSubtitlesArray(parsedSubtitles);
         };
 
         loadSubtitles();
@@ -73,8 +73,10 @@ const VideoPlayer = () => {
                     controls
                     width="100%"
                     height="auto"
-                    playing={false}
+                    playing={videoIsPlaying}
                     onProgress={handleProgress}
+                    onPlay={() => setVideoIsPlaying(true)}
+                    onPause={() => setVideoIsPlaying(false)}
                 />
 
                 {currentSubtitle && (

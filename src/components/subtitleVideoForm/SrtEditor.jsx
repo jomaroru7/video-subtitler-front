@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useFileStore from "../../stores/fileStore";
 
 const SrtEditor = () => {
-  const { currentSubtitle, updateSubtitleText, setSubtitlesEdited } = useFileStore();
+  const { currentSubtitle, updateSubtitleText, setSubtitlesEdited, videoIsPlaying } = useFileStore();
   const [editableText, setEditableText] = useState("");
 
   useEffect(() => {
@@ -15,17 +15,17 @@ const SrtEditor = () => {
     setEditableText(e.target.value);
   };
 
-  const handleClick = () =>{
-    updateSubtitleText( currentSubtitle.start, editableText);
+  const handleClick = () => {
+    updateSubtitleText(currentSubtitle.start, editableText);
     setSubtitlesEdited(true);
-  }
+  };
 
   if (!currentSubtitle) {
     return <p className="text-center text-gray-600">No active subtitle.</p>;
   }
 
   return (
-    <div className="">
+    <div>
       <p className="text-gray-700 mb-2">
         Editing subtitle at {currentSubtitle.start}s → {currentSubtitle.end}s
       </p>
@@ -33,12 +33,16 @@ const SrtEditor = () => {
         rows="3"
         value={editableText}
         onChange={handleTextChange}
-        className="w-full p-2 border rounded-md"
+        disabled={videoIsPlaying}
+        className={`w-full p-2 border rounded-md ${videoIsPlaying ? "bg-gray-200 cursor-not-allowed" : ""}`}
       />
-      <button 
+      <button
         onClick={handleClick}
-        className="w-full px-4 py-2 text-white font-medium rounded-xl shadow-md bg-blue-600 hover:bg-blue-700"
-        >
+        disabled={videoIsPlaying}
+        className={`w-full px-4 py-2 font-medium rounded-xl shadow-md ${
+          videoIsPlaying ? "bg-gray-400 cursor-not-allowed text-gray-700" : "bg-blue-600 hover:bg-blue-700 text-white"
+        }`}
+      >
         Update subtitles
       </button>
     </div>
