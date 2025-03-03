@@ -1,12 +1,12 @@
 const ENV = import.meta.env;
 
-export const getS3UploadUrl = async (uid, file) => {
+export const getS3UploadUrl = async (file_name, file_type) => {
   const response = await fetch(ENV.VITE_GET_S3_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      file_name: "video/" + uid + "/" + file.name,
-      file_type: file.type,
+      file_name,
+      file_type,
     }),
   });
 

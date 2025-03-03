@@ -35,6 +35,7 @@ import {
  * @property {(subtitlesEdited: boolean) => void} setSubtitlesEdited
  * @property {(videoIsPlaying: boolean) => void} setVideoIsPlaying
  * @property {() => Promise<boolean>} uploadFile
+ * @property {() => Promise<boolean>} uploadSrt 
  * @property {() => Promise<boolean>} extractAudio
  * @property {() => Promise<boolean>} getSubtitles
  * @property {() => Promise<boolean>} setVideoSubtitledUrl 
@@ -84,12 +85,30 @@ const useFileStore = create((set) => ({
       const uid = uuidv4();
       set({ uid });
 
-      const data = await getS3UploadUrl(uid, file);
+      const data = await getS3UploadUrl("video/" + uid + "/" + file.name, file.type);
       await uploadFileToS3(data.url, file);
 
       toast.success("File uploaded successfully!");
       return true;
     }, "File upload failed!");
+  },
+
+  /**
+   * Upload srt to S3
+   * @returns {Promise<boolean>} Success or failure status
+   */
+  uploadSrt: async () => {
+    const { subtitlesArray, uid } = useFileStore.getState();
+    const subtitlesFile = getSrtFileFromArray(subtitlesArray);
+    return handleAsyncAction(set, async () => {
+      const srtFileName ="processed/srt/" + uid + ".srt";
+
+      const data = await getS3UploadUrl(srtFileName, subtitlesFile.type);
+      await uploadFileToS3(data.url, subtitlesFile);
+
+      toast.success("New subtitles uploaded successfully!");
+      return true;
+    }, "Subtitles upload failed!");
   },
 
   /**
@@ -183,4 +202,36 @@ const handleAsyncAction = async (set, action, errorMessage) => {
   }
 };
 
+/**
+ * Converts an array of subtitle objects into an SRT file.
+ *
+ * @param {Array<{ start: number, end: number, text: string }>} subtitlesArray - The array of subtitles.
+ * @returns {File} The generated SRT file.
+ * @throws {Error} If the subtitles array is invalid.
+ */
+const getSrtFileFromArray = (subtitlesArray) => {
+  if (!Array.isArray(subtitlesArray) || subtitlesArray.length === 0) {
+    throw new Error("Invalid subtitles array");
+  }
+
+  const formatTime = (time) => {
+    const date = new Date(time * 1000);
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, "0");
+    return `${hours}:${minutes}:${seconds},${milliseconds}`;
+  };
+
+  const srtContent = subtitlesArray
+    .map((subtitle, index) => {
+      return `${index + 1}\n${formatTime(subtitle.start)} --> ${formatTime(subtitle.end)}\n${subtitle.text}\n`;
+    })
+    .join("\n");
+
+  const blob = new Blob([srtContent], { type: "text/plain" });
+  return new File([blob], "subtitles.srt", { type: "text/plain" });
+};
+
 export default useFileStore;
+

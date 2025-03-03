@@ -4,8 +4,11 @@ import DownloadButton from './DownloadButton';
 import SrtEditor from './SrtEditor';
 
 const SelectSubtitlesStyle = () => {
-  const {uploading, videoUrl, setVideoSubtitledUrl} = useFileStore()
+  const {uploading, videoUrl, subtitlesEdited, uploadSrt ,setVideoSubtitledUrl} = useFileStore()
   const handleClick = async () =>{
+    if (subtitlesEdited) {
+      await uploadSrt()
+    }
     await setVideoSubtitledUrl()
   }
   return (
