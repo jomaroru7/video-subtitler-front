@@ -21,6 +21,7 @@ const UploadFile = () => {
                 <FileInput/>
                 <button
                     onClick={handleClick}
+                    data-testid="upload-button"
                     disabled={uploading || !file}
                     className={`w-full px-4 py-2 text-white font-medium rounded-xl shadow-md ${uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                         }`}
