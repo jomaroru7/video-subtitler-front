@@ -14,7 +14,7 @@ const UploadFile = () => {
     return (
         <>
             <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-                Upload Your File
+                Selecciona tu video
             </h1>
 
             <div className="flex flex-col items-center space-y-4">
@@ -25,7 +25,7 @@ const UploadFile = () => {
                     className={`w-full px-4 py-2 text-white font-medium rounded-xl shadow-md ${uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                         }`}
                 >
-                    {uploading ? "Processing..." : "Upload Video"}
+                    {uploading ? "Procesando..." : "Subir Video"}
                 </button>
             </div>
         </>

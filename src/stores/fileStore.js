@@ -79,7 +79,7 @@ const useFileStore = create((set) => ({
    */
   uploadFile: async () => {
     const { file } = useFileStore.getState();
-    if (!file) return toast.error("Please select a file!"), false;
+    if (!file) return toast.error("Por favor, seleccione un archivo"), false;
 
     return handleAsyncAction(set, async () => {
       const uid = uuidv4();
@@ -88,9 +88,9 @@ const useFileStore = create((set) => ({
       const data = await getS3UploadUrl("video/" + uid + "/" + file.name, file.type);
       await uploadFileToS3(data.url, file);
 
-      toast.success("File uploaded successfully!");
+      toast.success("Archivo subido correctamente");
       return true;
-    }, "File upload failed!");
+    }, "Ha fallado la subida del fichero");
   },
 
   /**
@@ -106,9 +106,9 @@ const useFileStore = create((set) => ({
       const data = await getS3UploadUrl(srtFileName, subtitlesFile.type);
       await uploadFileToS3(data.url, subtitlesFile);
 
-      toast.success("New subtitles uploaded successfully!");
+      toast.success("Actualización de subtitulos correcta");
       return true;
-    }, "Subtitles upload failed!");
+    }, "La actualización de los subtítulos falló");
   },
 
   /**
@@ -117,15 +117,15 @@ const useFileStore = create((set) => ({
    */
   extractAudio: async () => {
     const { file, uid } = useFileStore.getState();
-    if (!file || !uid) return toast.error("Cannot extract audio. File or UID is missing!"), false;
+    if (!file || !uid) return toast.error("No se ha podido extraer el audio"), false;
 
     return handleAsyncAction(set, async () => {
       const data = await extractAudioFromVideo(uid, file.name);
       set({ audioName: data.key });
 
-      toast.success("Audio extracted successfully!");
+      toast.success("Audio extraido correctamente");
       return true;
-    }, "Audio extraction failed!");
+    }, "Fallo en la extracción del audio");
   },
 
   /**
@@ -134,7 +134,7 @@ const useFileStore = create((set) => ({
    */
   getSubtitles: async () => {
     const { uid, audioName } = useFileStore.getState();
-    if (!uid || !audioName) return toast.error("Cannot generate subtitles. UID or audio name is missing!"), false;
+    if (!uid || !audioName) return toast.error("No se han podido generar los subtítulos"), false;
 
     return handleAsyncAction(set, async () => {
       const data = await getSubtitles(uid, audioName);
@@ -146,14 +146,14 @@ const useFileStore = create((set) => ({
 
       // Fetch subtitles content
       const response = await fetch(subtitlesURL);
-      if (!response.ok) throw new Error("Failed to fetch subtitles");
+      if (!response.ok) throw new Error("No se han encontrado los subtítulos");
 
       const text = await response.text();
       set({ subtitles: text });
 
-      toast.success("Subtitles generated successfully!");
+      toast.success("Subtítulos generados correctamente");
       return true;
-    }, "Subtitles generation failed!");
+    }, "Ha fallado la generación de subtítulos");
   },
 
   /**
@@ -162,15 +162,15 @@ const useFileStore = create((set) => ({
    */
   setVideoSubtitledUrl: async () => {
     const { uid, file, subtitlesName } = useFileStore.getState();
-    if (!uid || !file) return toast.error("Cannot get video. UID or file is missing!"), false;
+    if (!uid || !file) return toast.error("No se ha podido obtener el video"), false;
 
     return handleAsyncAction(set, async () => {
       const data = await getVideoSubtitled(uid, file.name, subtitlesName);
       set({ videoUrl: data.url });
 
-      toast.success("Video URL obtained successfully!");
+      toast.success("Url del video obtenida");
       return true;
-    }, "Video URL could not be obtained!");
+    }, "No se ha podido obtener la url del video");
   },
 
   updateSubtitleText: (startTime, newText) => {

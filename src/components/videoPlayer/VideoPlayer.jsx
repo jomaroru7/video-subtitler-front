@@ -61,7 +61,7 @@ const VideoPlayer = () => {
     };
 
     if (!videoSrc) {
-        return <p className="text-center text-gray-600">No video selected.</p>;
+        return <p className="text-center text-gray-600">Video no seleccionado.</p>;
     }
 
     return (

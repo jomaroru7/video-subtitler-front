@@ -27,7 +27,7 @@ const SrtEditor = () => {
   return (
     <div>
       <p className="text-gray-700 mb-2">
-        Editing subtitle at {currentSubtitle.start}s → {currentSubtitle.end}s
+        Editando subtitulos en {currentSubtitle.start}s → {currentSubtitle.end}s
       </p>
       <textarea
         rows="3"
@@ -43,7 +43,7 @@ const SrtEditor = () => {
           videoIsPlaying ? "bg-gray-400 cursor-not-allowed text-gray-700" : "bg-blue-600 hover:bg-blue-700 text-white"
         }`}
       >
-        Update subtitles
+        Actualizar subtítulos
       </button>
     </div>
   );

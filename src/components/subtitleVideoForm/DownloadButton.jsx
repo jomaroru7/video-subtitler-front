@@ -30,7 +30,6 @@ const DownloadButton = () => {
       window.URL.revokeObjectURL(blobUrl); 
     } catch (error) {
       console.error("Error downloading the video:", error.message);
-      alert("Failed to download the video from S3.");
     }
   };
 
@@ -39,7 +38,7 @@ const DownloadButton = () => {
       onClick={handleDownload}
       className={"w-full px-4 py-2 text-white font-medium rounded-xl shadow-md bg-blue-600 hover:bg-blue-700"}
     >
-      Download
+      Descargar video
     </button>
   );
 };

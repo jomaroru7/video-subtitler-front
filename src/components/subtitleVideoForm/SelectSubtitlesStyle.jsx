@@ -21,7 +21,7 @@ const SelectSubtitlesStyle = () => {
                     className={`w-full px-4 py-2 text-white font-medium rounded-xl shadow-md ${uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                         }`}
                 >
-                    {uploading ? "Processing..." : "Generate subtitled video"}
+                    {uploading ? "Procesando..." : "Generar video subtitulado"}
                 </button>
             {videoUrl && <DownloadButton/>}
         </div>
