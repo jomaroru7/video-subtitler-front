@@ -7,6 +7,7 @@ import VideoPlayerComponent from "./components/videoPlayer/VideoPlayer";
 import SelectSubtitlesStyle from "./components/subtitleVideoForm/SelectSubtitlesStyle";
 import UploadVideoForm from "./components/uploadVideoForm/UploadVideoForm";
 import Spinner from "./components/Spinner";
+import Guide from "./components/guide/Guide";
 
 function App() {
     const { file, subtitles, uploading } = useFileStore()
@@ -15,6 +16,7 @@ function App() {
     return (
         <div className="min-h-screen flex flex-col justify-between items-center bg-gray-100">
             <Header />
+            <Guide/>
             {uploading && <Spinner/>}
             {isPlayerReady && <VideoPlayerComponent />}
             {isPlayerReady && <SelectSubtitlesStyle/>}
