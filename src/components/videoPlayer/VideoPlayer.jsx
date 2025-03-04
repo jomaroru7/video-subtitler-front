@@ -77,6 +77,7 @@ const VideoPlayer = () => {
                     onProgress={handleProgress}
                     onPlay={() => setVideoIsPlaying(true)}
                     onPause={() => setVideoIsPlaying(false)}
+                    data-testid="video-player" 
                 />
 
                 {currentSubtitle && (
