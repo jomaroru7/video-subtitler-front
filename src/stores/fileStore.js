@@ -82,7 +82,8 @@ const useFileStore = create((set) => ({
     if (!file) return toast.error("Por favor, seleccione un archivo"), false;
 
     return handleAsyncAction(set, async () => {
-      const uid = uuidv4();
+      // const uid = uuidv4();
+      const uid = generateUID();
       set({ uid });
 
       const data = await getS3UploadUrl("video/" + uid + "/" + file.name, file.type);
@@ -231,6 +232,19 @@ const getSrtFileFromArray = (subtitlesArray) => {
 
   const blob = new Blob([srtContent], { type: "text/plain" });
   return new File([blob], "subtitles.srt", { type: "text/plain" });
+};
+
+const generateUID = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+
+  return `${year}${month}${day}-${hours}${minutes}${seconds}${milliseconds}`;
 };
 
 export default useFileStore;
