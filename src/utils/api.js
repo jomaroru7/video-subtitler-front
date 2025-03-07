@@ -56,6 +56,26 @@ export const extractAudioFromVideo = async (uid, filename, bucket = ENV.VITE_S3_
   return await response.json();
 };
 
+export const generateSubtitles = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_BUCKET) => {
+  const response = await fetch(ENV.VITE_GET_SUBTITLES_URL+"/start", {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      IID: uid,
+      audio: filename,
+      bucket: bucket,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Server error: ${response.status}`);
+  }
+
+
+  return response;
+};
+
 export const getSubtitles = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_BUCKET) => {
   const response = await fetch(ENV.VITE_GET_SUBTITLES_URL, {
     method: "POST",
@@ -73,7 +93,7 @@ export const getSubtitles = async (uid, filename, bucket = ENV.VITE_S3_DEFAULT_B
   }
 
 
-  return await response.json();
+  return await response;
 };
 
 export const getVideoSubtitled = async (uid, filename, srtName, bucket = ENV.VITE_S3_DEFAULT_BUCKET) => {

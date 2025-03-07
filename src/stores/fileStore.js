@@ -6,7 +6,8 @@ import {
   uploadFileToS3,
   extractAudioFromVideo,
   getSubtitles,
-  getVideoSubtitled
+  getVideoSubtitled,
+  generateSubtitles
 } from "../utils/api";
 
 /**
@@ -56,7 +57,7 @@ const useFileStore = create((set) => ({
   subtitlesArray: [],
   currentSubtitle: [],
   subtitlesEdited: false,
-  videoIsPlaying:false,
+  videoIsPlaying: false,
 
 
   // State Setters
@@ -102,7 +103,7 @@ const useFileStore = create((set) => ({
     const { subtitlesArray, uid } = useFileStore.getState();
     const subtitlesFile = getSrtFileFromArray(subtitlesArray);
     return handleAsyncAction(set, async () => {
-      const srtFileName ="processed/srt/" + uid + ".srt";
+      const srtFileName = "processed/srt/" + uid + ".srt";
 
       const data = await getS3UploadUrl(srtFileName, subtitlesFile.type);
       await uploadFileToS3(data.url, subtitlesFile);
@@ -138,10 +139,16 @@ const useFileStore = create((set) => ({
     if (!uid || !audioName) return toast.error("No se han podido generar los subtítulos"), false;
 
     return handleAsyncAction(set, async () => {
-      const data = await getSubtitles(uid, audioName);
+      const generateResponse = await generateSubtitles(uid, audioName);
 
-      const subtitlesFileName = data.body.subtitles.key;
-      const subtitlesURL = data.body.subtitles.url;
+      if (generateResponse.status !== 200) {
+        throw new Error("No se han podido generar los subtitulos");
+      }
+
+      const data = await pollGetSubtitles();
+
+      const subtitlesFileName = data.subtitles.key;
+      const subtitlesURL = data.subtitles.url;
 
       set({ subtitlesName: subtitlesFileName, subtitlesUrl: subtitlesURL });
 
@@ -179,7 +186,7 @@ const useFileStore = create((set) => ({
       subtitlesArray: state.subtitlesArray.map((sub) =>
         sub.start === startTime ? { ...sub, text: newText } : sub
       ),
-      currentSubtitle: { startTime:startTime, text: newText },
+      currentSubtitle: { startTime: startTime, text: newText },
     }));
   },
 }));
@@ -246,6 +253,43 @@ const generateUID = () => {
 
   return `${year}${month}${day}-${hours}${minutes}${seconds}${milliseconds}`;
 };
+
+const pollGetSubtitles = async () => {
+  const { uid, audioName } = useFileStore.getState();
+  let attempt = 0;
+
+  return new Promise((resolve, reject) => {
+    const initalInterval = 10000;
+    const defaultInterval = 5000;
+    const poll = async () => {
+      attempt++;
+
+      try {
+        const result = await getSubtitles(uid, audioName);
+
+        if (result.status === 200) {
+          resolve(await result.json());
+          return;
+        }
+
+      } catch (error) {
+        reject(error);
+        return;
+      }
+
+      if (attempt >= 10) {
+        reject(new Error("Polling stopped: Maximum attempts reached."));
+        return;
+      }
+
+      const delay = attempt < 2 ? initalInterval : defaultInterval;
+      setTimeout(poll, delay);
+    };
+
+    poll();
+  });
+}
+
 
 export default useFileStore;
 
