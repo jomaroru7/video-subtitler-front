@@ -278,10 +278,10 @@ const pollGetSubtitles = async () => {
         return;
       }
 
-      if (attempt >= maxAttempts) {
-        reject(new Error("Polling stopped: Maximum attempts reached."));
-        return;
-      }
+      // if (attempt >= maxAttempts) {
+      //   reject(new Error("Polling stopped: Maximum attempts reached."));
+      //   return;
+      // }
 
       const delay = attempt < 2 ? initalInterval : defaultInterval;
       setTimeout(poll, delay);
