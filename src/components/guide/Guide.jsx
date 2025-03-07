@@ -13,14 +13,11 @@ const Guide = () => {
       </button>
       {isOpen && (
         <div className="mt-2 space-y-2">
-          <p>1. Sube tu video. Cuando termine de procesar tendrás los subtítulos generados.</p>
-          <p>
-            2. Modifica los subtítulos a tu gusto. Para ello deberás pausar el video.
-            <br/>
-            Cada vez que modifiques una parte de los subtítulos, presiona el botón "Actualizar subtítulos"
-          </p>
-          <p>3. Al acabar de modificar, pulsa el botón "Generar video subtitulado".</p>
-          <p>4. Al acabar, presiona el botón "Descargar video" para obtener tu video</p>
+          <p>1. Sube tu video.</p>
+          <p>2. Espera que nuestra IA haga el trabajo. Aproximadamente, cada 1 min de vídeo tarda 30 segundos en todo el proceso.</p>
+          <p>3. Modifica los subtítulos a tu gusto. Puedes cambiar los subtítulos en cada segmento del vídeo, presionando el botón "Actualizar subtítulos".</p>
+          <p>4. Al acabar de modificar, pulsa el botón "Generar video subtitulado".</p>
+          <p>5. Aparecerá un nuevo botón, "Descargar video", cuando el proceso termine.</p>
         </div>
       )}
     </div>

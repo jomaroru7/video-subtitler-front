@@ -8,32 +8,36 @@ import SelectSubtitlesStyle from "./components/subtitleVideoForm/SelectSubtitles
 import UploadVideoForm from "./components/uploadVideoForm/UploadVideoForm";
 import Spinner from "./components/Spinner";
 import Guide from "./components/guide/Guide";
+import Footer from "./components/Footer";
 
 function App() {
     const { file, subtitles, uploading } = useFileStore()
     const isPlayerReady = Boolean(file) && Boolean(subtitles);
 
     return (
-        <div className="min-h-screen flex flex-col justify-between items-center bg-gray-100">
-            <Header />
-            <Guide/>
-            {uploading && <Spinner/>}
-            {isPlayerReady && <VideoPlayerComponent />}
-            {isPlayerReady && <SelectSubtitlesStyle/>}
-            {!isPlayerReady &&<UploadVideoForm/>}
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
-        </div>
+        <>
+            <div className="min-h-screen flex flex-col justify-between items-center bg-gray-100">
+                <Header />
+                <Guide />
+                {uploading && <Spinner />}
+                {isPlayerReady && <VideoPlayerComponent />}
+                {isPlayerReady && <SelectSubtitlesStyle />}
+                {!isPlayerReady && <UploadVideoForm />}
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                />
+                <Footer />
+            </div>
+        </>
     );
 }
 
