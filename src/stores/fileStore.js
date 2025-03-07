@@ -261,6 +261,7 @@ const pollGetSubtitles = async () => {
   return new Promise((resolve, reject) => {
     const initalInterval = 10000;
     const defaultInterval = 5000;
+    const maxAttempts = 60;
     const poll = async () => {
       attempt++;
 
@@ -277,7 +278,7 @@ const pollGetSubtitles = async () => {
         return;
       }
 
-      if (attempt >= 10) {
+      if (attempt >= maxAttempts) {
         reject(new Error("Polling stopped: Maximum attempts reached."));
         return;
       }
