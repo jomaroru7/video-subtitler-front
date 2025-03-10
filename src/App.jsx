@@ -9,14 +9,15 @@ import UploadVideoForm from "./components/uploadVideoForm/UploadVideoForm";
 import Spinner from "./components/Spinner";
 import Guide from "./components/guide/Guide";
 import Footer from "./components/Footer";
+import BuyMeACoffe from "./components/BuyMeACoffe";
 
 function App() {
     const { file, subtitles, uploading } = useFileStore()
     const isPlayerReady = Boolean(file) && Boolean(subtitles);
 
     return (
-        <>
-            <div className="min-h-screen flex flex-col justify-between items-center bg-gray-100">
+        <div className="min-h-screen flex flex-col justify-between bg-gray-100 items-center">
+            <div className="flex flex-col flex-1 justify-between items-center relative xl:w-6xl">
                 <Header />
                 <Guide />
                 {uploading && <Spinner />}
@@ -35,9 +36,10 @@ function App() {
                     pauseOnHover
                     theme="colored"
                 />
-                <Footer />
+                <BuyMeACoffe />
             </div>
-        </>
+            <Footer />
+        </div>
     );
 }
 

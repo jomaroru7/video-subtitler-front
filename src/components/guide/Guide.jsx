@@ -4,7 +4,7 @@ const Guide = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="w-80 p-4 bg-white shadow-lg rounded-xl lg:fixed lg:top-4 lg:left-4 z-10">
+    <div className="w-80 p-4 bg-white shadow-lg rounded-xl xl:absolute xl:top-4 xl:left-4 z-10 my-2.5 xl:my-0">
       <button 
         onClick={() => setIsOpen(!isOpen)} 
         className="w-full text-left font-semibold text-lg flex justify-between">
